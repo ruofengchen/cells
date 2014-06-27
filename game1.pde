@@ -1,3 +1,5 @@
+// need to change Ln data structure
+
 ArrayList<Pt> pts = new ArrayList<Pt>();
 ArrayList<Ln> lns = new ArrayList<Ln>();
 int d_th = 400; // finger gap threshold for new point or selection recognition
