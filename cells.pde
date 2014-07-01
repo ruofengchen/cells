@@ -8,6 +8,8 @@ boolean draw_line = false;
 int mouse_selected_idx;
 boolean drag_point = false;
 
+PolyModel pm;
+
 void setup() {
   size(800, 600);
 }
@@ -25,7 +27,7 @@ void draw() {
   for (int i = 0; i < lns.size(); i++) {
     lns.get(i).plot();
     fill(255);
-    text(i, (lns.get(i).s.x+lns.get(i).e.x)/2, (lns.get(i).s.y+lns.get(i).e.y)/2-10);
+    text(i, (lns.get(i).S().x+lns.get(i).E().x)/2, (lns.get(i).S().y+lns.get(i).E().y)/2-10);
     noFill();
   }
   
@@ -41,6 +43,15 @@ void draw() {
   if (drag_point) {
     pts.get(mouse_selected_idx).moveTo(mouseX, mouseY);
   }
+  
+//  // debug
+//  if (inpts != null) {
+//    for (int i = 0; i < polys.size(); i++) {
+//      for (int j = 0; j < inpts[i].size(); j++) {
+//        inpts[i].get(j).plot2();
+//      }
+//    }
+//  }
 }
 
 int selectPoint() {
@@ -77,13 +88,15 @@ void saveToFile() {
   for (int i = 0; i < lns.size(); i++) {
     JSONObject value = new JSONObject();
     for (int j = 0; j < pts.size(); j++) {
-      if (lns.get(i).s == pts.get(j)) {
+      if (lns.get(i).S() == pts.get(j)) {
         value.setInt("s_idx", j);
       }
-      if (lns.get(i).e == pts.get(j)) {
+      if (lns.get(i).S() == pts.get(j)) {
         value.setInt("e_idx", j);
       } 
     }
+    value.setInt("s_idx", lns.get(i).s);
+    value.setInt("e_idx", lns.get(i).e);
     values.setJSONObject(i, value);
   }
   saveJSONArray(values, "lines.json");
@@ -104,7 +117,7 @@ void loadFromFile() {
     JSONObject ln_json = values.getJSONObject(i);
     int s_idx = ln_json.getInt("s_idx");
     int e_idx = ln_json.getInt("e_idx");
-    Ln ln = new Ln(pts.get(s_idx), pts.get(e_idx));
+    Ln ln = new Ln(pts, s_idx, e_idx);
     lns.add(ln);
   }
 }
@@ -139,8 +152,8 @@ void mouseReleased() {
   }
   else {
     if (mouse_selected_idx != selected) {
-      Ln l = new Ln(pts.get(mouse_selected_idx), pts.get(selected));
-      if (!checkIfLineIsInArray(l, lns) && !checkIfLineCrossExistingLine(l, lns))
+      Ln l = new Ln(pts, mouse_selected_idx, selected);
+      if (checkIfLineIsInArray(l, lns) < 0 && !checkIfLineCrossExistingLine(l, lns))
         lns.add(l);
     }
   }
@@ -155,5 +168,8 @@ void keyPressed() {
   }
   if (key == 'l') {
     loadFromFile();
+  }
+  if (key == 't') {
+    processDrawing(lns, pts);
   }
 }
