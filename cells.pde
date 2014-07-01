@@ -33,20 +33,25 @@ void draw() {
     noFill();
   }
   
-  if (place_new_point) {
-    fill(255, 0, 0);
-    ellipse(mouseX, mouseY, 20, 20);
-    noFill();
+  if (status == 0) { // configure geometry
+  
+    if (place_new_point) {
+      fill(255, 0, 0);
+      ellipse(mouseX, mouseY, 20, 20);
+      noFill();
+    }
+    
+    if (draw_line) {
+      pts.get(mouse_selected_idx).plotLineTo(new Pt(mouseX, mouseY));
+    }
+    if (drag_point) {
+      pts.get(mouse_selected_idx).moveTo(mouseX, mouseY);
+    }
+  
   }
   
-  if (draw_line) {
-    pts.get(mouse_selected_idx).plotLineTo(new Pt(mouseX, mouseY));
-  }
-  if (drag_point) {
-    pts.get(mouse_selected_idx).moveTo(mouseX, mouseY);
-  }
+  if (status == 1) { // gameplay
   
-  if (status == 1) {
     for (int i = 0; i < polyes.size(); i++) {
       int midx = 0;
       int midy = 0;
@@ -63,6 +68,7 @@ void draw() {
       text(i, midx, midy);
       noFill();
     }
+    
   }
   
 //  // debug
@@ -144,42 +150,52 @@ void loadFromFile() {
 }
 
 void mousePressed() {
-  int selected = selectPoint();
-  if (selected < 0) {
-    place_new_point = true;
-    draw_line = false;
-  }
-  else {
-    if (keyPressed == true && key == ' ') {
-      drag_point = true;
-      mouse_selected_idx = selected;
+  
+  if (status == 0) {
+  
+    int selected = selectPoint();
+    if (selected < 0) {
+      place_new_point = true;
+      draw_line = false;
     }
     else {
-      draw_line = true;
-      mouse_selected_idx = selected;
+      if (keyPressed == true && key == ' ') {
+        drag_point = true;
+        mouse_selected_idx = selected;
+      }
+      else {
+        draw_line = true;
+        mouse_selected_idx = selected;
+      }
     }
+  
   }
 }
 
 void mouseReleased() {
-  draw_line = false;
-  drag_point = false;
-  int selected = selectPoint();
-  if (selected < 0) {
-    if (place_new_point == true) {
-      Pt pt = new Pt(mouseX, mouseY);
-      pts.add(pt);
-    }
-  }
-  else {
-    if (mouse_selected_idx != selected) {
-      Ln l = new Ln(pts, mouse_selected_idx, selected);
-      if (checkIfLineIsInArray(l, lns) < 0 && !checkIfLineCrossExistingLine(l, lns))
-        lns.add(l);
-    }
-  }
   
-  place_new_point = false;
+  if (status == 0) {
+  
+    draw_line = false;
+    drag_point = false;
+    int selected = selectPoint();
+    if (selected < 0) {
+      if (place_new_point == true) {
+        Pt pt = new Pt(mouseX, mouseY);
+        pts.add(pt);
+      }
+    }
+    else {
+      if (mouse_selected_idx != selected) {
+        Ln l = new Ln(pts, mouse_selected_idx, selected);
+        if (checkIfLineIsInArray(l, lns) < 0 && !checkIfLineCrossExistingLine(l, lns))
+          lns.add(l);
+      }
+    }
+    
+    place_new_point = false;
+  
+  }
   
 }
 

@@ -20,11 +20,7 @@ int orientation(Pt p, Pt q, Pt r)
   return (val > 0)? 1: 2; // clock or counterclock wise
 }
 
-boolean doIntersect(Ln l1, Ln l2) {
-  Pt p1 = l1.S();
-  Pt q1 = l1.E();
-  Pt p2 = l2.S();
-  Pt q2 = l2.E();
+boolean doIntersect(Pt p1, Pt q1, Pt p2, Pt q2) {
 
   // if they share the same point, they don't intersect
   if (p1 == p2 || p1 == q2 || q1 == q2 || q1 == p2)
@@ -66,8 +62,9 @@ int checkIfLineIsInArray(Ln l, ArrayList<Ln> lns) {
 }
 
 boolean checkIfLineCrossExistingLine(Ln l, ArrayList<Ln> lns) {
-  for (int i = 0; i < lns.size (); i++) {
-    if (doIntersect(l, lns.get(i))) return true;
+  for (int i = 0; i < lns.size(); i++) {
+    if (doIntersect(l.S(), l.E(), lns.get(i).S(), lns.get(i).E()))
+      return true;
   }
   return false;
 }
@@ -196,12 +193,12 @@ ArrayList<ArrayList<Integer>> getEdgesOfPolys(ArrayList<Integer>[] neighbors, Ar
     }  
   }
     
-  for (int j = 0; j < edges.size(); j++) {
-    for (int k = 0; k < edges.get(j).size(); k++) {
-      print(edges.get(j).get(k)+","); 
-    }
-    println();
-  } 
+//  for (int j = 0; j < edges.size(); j++) {
+//    for (int k = 0; k < edges.get(j).size(); k++) {
+//      print(edges.get(j).get(k)+","); 
+//    }
+//    println();
+//  } 
   return edges;
 }
 
@@ -223,13 +220,13 @@ ArrayList<Integer>[] getNeighborsOfPolys(ArrayList<ArrayList<Integer>> polyes) {
     }
   }
   
-  for (int i = 0; i < polyes.size(); i++) {
-    print(i+":");
-    for (int j = 0; j < neighbors[i].size(); j++) {
-      print(neighbors[i].get(j)+",");
-    }
-    println();
-  }
+//  for (int i = 0; i < polyes.size(); i++) {
+//    print(i+":");
+//    for (int j = 0; j < neighbors[i].size(); j++) {
+//      print(neighbors[i].get(j)+",");
+//    }
+//    println();
+//  }
   
   return neighbors;
 }
@@ -239,4 +236,12 @@ void processDrawing(ArrayList<Ln> lns, ArrayList<Pt> pts) {
   polyes = getEdgesOfPolys(neighbors, lns, pts);
   polyns = getNeighborsOfPolys(polyes);
   status = 1;
+}
+
+int getPolygonPointFallsIn(ArrayList<Integer>[] polyes, Pt p) {
+  
+  // to-do:
+  // 1. remove the big polygon
+  // 2. finish this function
+  
 }
