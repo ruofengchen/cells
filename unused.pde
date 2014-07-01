@@ -241,3 +241,13 @@ ArrayList<Pt>[] getInnerPoints(ArrayList<boolean[]> polys, ArrayList<Ln> lns, Ar
   }
   return inpts;
 }
+
+// positive: v1 rotates clockwise to v2
+boolean direction(Pt s1, Pt e1, Pt s2, Pt e2) {
+  int dx1 = s1.x - e1.x;
+  int dy1 = s1.y - e1.y;
+  int dx2 = s2.x - e2.x;
+  int dy2 = s2.y - e2.y;
+  int cross_product = dx1 * dy2 - dx2 * dy1;
+  return cross_product > 0;
+}

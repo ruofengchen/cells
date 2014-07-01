@@ -8,7 +8,9 @@ boolean draw_line = false;
 int mouse_selected_idx;
 boolean drag_point = false;
 
-PolyModel pm;
+ArrayList<ArrayList<Integer>> polyes;
+ArrayList<Integer>[] polyns;
+int status = 0; // 0: draw, 1: generated models
 
 void setup() {
   size(800, 600);
@@ -42,6 +44,25 @@ void draw() {
   }
   if (drag_point) {
     pts.get(mouse_selected_idx).moveTo(mouseX, mouseY);
+  }
+  
+  if (status == 1) {
+    for (int i = 0; i < polyes.size(); i++) {
+      int midx = 0;
+      int midy = 0;
+      for (int j = 0; j < polyes.get(i).size(); j++) {
+        midx += lns.get(polyes.get(i).get(j)).S().x;
+        midy += lns.get(polyes.get(i).get(j)).S().y;
+        midx += lns.get(polyes.get(i).get(j)).E().x;
+        midy += lns.get(polyes.get(i).get(j)).E().y;
+      }
+      midx /= (polyes.get(i).size() * 2);
+      midy /= (polyes.get(i).size() * 2);
+      
+      fill(200, 0 , 0);
+      text(i, midx, midy);
+      noFill();
+    }
   }
   
 //  // debug

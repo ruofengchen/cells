@@ -79,12 +79,3 @@ class Ln {
       return false;
   }
 };
-
-class PolyModel {
-  ArrayList<boolean[]> polys;
-  ArrayList<ArrayList<Integer>> edges;
-  PolyModel(ArrayList<boolean[]> polys_, ArrayList<ArrayList<Integer>> edges_) {
-    polys = polys_;
-    edges = edges_;
-  }
-};
