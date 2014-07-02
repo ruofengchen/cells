@@ -8,6 +8,17 @@ boolean onSegment(Pt p, Pt q, Pt r)
   return false;
 }
 
+// positive: v1 rotates clockwise to v2
+boolean direction(Pt s1, Pt e1, Pt s2, Pt e2) {
+  int dx1 = s1.x - e1.x;
+  int dy1 = s1.y - e1.y;
+  int dx2 = s2.x - e2.x;
+  int dy2 = s2.y - e2.y;
+  int cross_product = dx1 * dy2 - dx2 * dy1;
+  return cross_product > 0;
+}
+
+// eventually these two functions will be rewritten
 int orientation(Pt p, Pt q, Pt r)
 {
   // See 10th slides from following link for derivation of the formula
@@ -131,8 +142,6 @@ ArrayList<Integer>[] getNeighborsOfLines(ArrayList<Ln> lns, ArrayList<Pt> pts) {
   return neighbors;
 }
 
-
-
 ArrayList<ArrayList<Integer>> getEdgesOfPolys(ArrayList<Integer>[] neighbors, ArrayList<Ln> lns, ArrayList<Pt> pts) {
   ArrayList<ArrayList<Integer>> edges = new ArrayList<ArrayList<Integer>>();
   
@@ -160,7 +169,9 @@ ArrayList<ArrayList<Integer>> getEdgesOfPolys(ArrayList<Integer>[] neighbors, Ar
         l = new Ln(pts, start, next);
         l_index = checkIfLineIsInArray(l, lns);
         edges_in_poly.add(l_index);
+        
       }
+      
       // if new poly, add to list
       boolean poly_already_exists = false;
       for (int m = 0; m < edges.size(); m++) {
@@ -238,10 +249,16 @@ void processDrawing(ArrayList<Ln> lns, ArrayList<Pt> pts) {
   status = 1;
 }
 
+Pt getPointInsidePoly(ArrayList<Integer>[] polyes, int poly_idx) {
+  // calculate the center of every three points, until we find a center point that's inside this polygon
+  return new Pt(0, 0);
+}
+
 int getPolygonPointFallsIn(ArrayList<Integer>[] polyes, Pt p) {
   
-  // to-do:
-  // 1. remove the big polygon
-  // 2. finish this function
-  
+  return 0;
+}
+
+int getOutsidePolygonIndex(ArrayList<Integer>[] polyes) {
+  return 0;
 }
