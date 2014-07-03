@@ -246,19 +246,52 @@ void processDrawing(ArrayList<Ln> lns, ArrayList<Pt> pts) {
   ArrayList<Integer>[] neighbors = getNeighborsOfLines(lns, pts);
   polyes = getEdgesOfPolys(neighbors, lns, pts);
   polyns = getNeighborsOfPolys(polyes);
+  outsidePoly = getOutsidePolygonIndex(polyes);
+  print(outsidePoly);
   status = 1;
 }
 
-Pt getPointInsidePoly(ArrayList<Integer>[] polyes, int poly_idx) {
-  // calculate the center of every three points, until we find a center point that's inside this polygon
-  return new Pt(0, 0);
+boolean checkPointInPoly(ArrayList<ArrayList<Integer>> polyes, int poly_idx, Pt p) {
+  Pt remotePt = new Pt(0, 0);
+  boolean intersect_is_odd = false;
+  for (int i = 0; i < polyes.get(poly_idx).size(); i++) {
+    if (doIntersect(p, remotePt, lns.get(polyes.get(poly_idx).get(i)).S(), lns.get(polyes.get(poly_idx).get(i)).E()))
+      intersect_is_odd = !intersect_is_odd;
+  }
+  return intersect_is_odd;
 }
 
-int getPolygonPointFallsIn(ArrayList<Integer>[] polyes, Pt p) {
-  
-  return 0;
+Pt getPointInsidePoly(ArrayList<ArrayList<Integer>> polyes, int poly_idx) {
+  int gap = 10;
+  int l_idx = polyes.get(poly_idx).get(0);
+  int midx = (lns.get(l_idx).S().x+lns.get(l_idx).E().x)/2;
+  int midy = (lns.get(l_idx).S().y+lns.get(l_idx).E().y)/2;
+  Pt mid = new Pt(midx+gap, midy+gap);
+  if (checkPointInPoly(polyes, poly_idx, mid))
+    return mid;
+  else return new Pt(midx-gap, midy-gap);
 }
 
-int getOutsidePolygonIndex(ArrayList<Integer>[] polyes) {
-  return 0;
+int getPolygonPointFallsIn(ArrayList<ArrayList<Integer>> polyes, Pt p, int outsidePoly) {
+  for (int i = 0; i < polyes.size(); i++) {
+    if (checkPointInPoly(polyes, i, p) && outsidePoly != i)
+      return i;
+  }
+  return outsidePoly;
+}
+
+int getOutsidePolygonIndex(ArrayList<ArrayList<Integer>> polyes) {
+  int[] count = new int[polyes.size()];
+  for (int i = 0; i < polyes.size(); i++) {
+    Pt p = getPointInsidePoly(polyes, i);
+    count[i]++;
+    for (int j = 0; j < polyes.size(); j++) {
+      if (j != i && checkPointInPoly(polyes, j, p)) {
+        count[j]++;
+        if (count[i] > 2)
+          return i;
+      }
+    }
+  }
+  return -1;
 }

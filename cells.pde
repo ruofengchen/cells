@@ -9,6 +9,7 @@ int mouse_selected_idx;
 boolean drag_point = false;
 
 ArrayList<ArrayList<Integer>> polyes;
+int outsidePoly = -1;
 ArrayList<Integer>[] polyns;
 int status = 0; // 0: draw, 1: generated models
 
@@ -53,19 +54,9 @@ void draw() {
   if (status == 1) { // gameplay
   
     for (int i = 0; i < polyes.size(); i++) {
-      int midx = 0;
-      int midy = 0;
-      for (int j = 0; j < polyes.get(i).size(); j++) {
-        midx += lns.get(polyes.get(i).get(j)).S().x;
-        midy += lns.get(polyes.get(i).get(j)).S().y;
-        midx += lns.get(polyes.get(i).get(j)).E().x;
-        midy += lns.get(polyes.get(i).get(j)).E().y;
-      }
-      midx /= (polyes.get(i).size() * 2);
-      midy /= (polyes.get(i).size() * 2);
-      
+      Pt p = getPointInsidePoly(polyes, i);
       fill(200, 0 , 0);
-      text(i, midx, midy);
+      text(i, p.x, p.y);
       noFill();
     }
     
@@ -195,6 +186,10 @@ void mouseReleased() {
     
     place_new_point = false;
   
+  }
+  
+  if (status == 1) {
+    println(getPolygonPointFallsIn(polyes, new Pt(mouseX, mouseY), outsidePoly));
   }
   
 }
