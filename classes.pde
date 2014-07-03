@@ -22,7 +22,9 @@ class Pt {
   }
   void plotLineTo(Pt p) {
     fill(0, 0, 255);
+    strokeWeight(5);
     line(x, y, p.x, p.y);
+    strokeWeight(1);
     noFill();
   }
   int dist2(Pt p) {
@@ -63,7 +65,9 @@ class Ln {
   }
   void plot() {
     fill(0, 0, 128);
+    strokeWeight(10);
     line(S().x, S().y, E().x, E().y);
+    strokeWeight(1);
     noFill();
   }
   Pt S() {

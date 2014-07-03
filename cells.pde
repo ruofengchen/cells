@@ -8,10 +8,13 @@ boolean draw_line = false;
 int mouse_selected_idx;
 boolean drag_point = false;
 
-ArrayList<ArrayList<Integer>> polyes;
+ArrayList<ArrayList<Integer>> polyes; // use negative number to denote corrupted edges
 int outsidePoly = -1;
 ArrayList<Integer>[] polyns;
 int status = 0; // 0: draw, 1: generated models
+
+ArrayList<Pt> trail = new ArrayList<Pt>(); // for rendering
+ArrayList<Integer> path = new ArrayList<Integer>(); // for calculation
 
 void setup() {
   size(800, 600);
@@ -51,7 +54,7 @@ void draw() {
   
   }
   
-  if (status == 1) { // gameplay
+  if (status > 0) { // gameplay
   
     for (int i = 0; i < polyes.size(); i++) {
       Pt p = getPointInsidePoly(polyes, i);
@@ -60,6 +63,15 @@ void draw() {
       noFill();
     }
     
+    if (status == 1) { // place starting point
+      
+    }
+    
+    if (status == 2) {
+      for (int i = 0; i < trail.size()-1; i++) {
+        trail.get(i).plotLineTo(trail.get(i+1));
+      }
+    }
   }
   
 //  // debug
@@ -185,11 +197,18 @@ void mouseReleased() {
     }
     
     place_new_point = false;
-  
+    return;
   }
   
   if (status == 1) {
-    println(getPolygonPointFallsIn(polyes, new Pt(mouseX, mouseY), outsidePoly));
+    place_start_point();
+    println("start point placed.");
+    return;
+  }
+  
+  if (status == 2) {
+    move_forward();
+    return;
   }
   
 }

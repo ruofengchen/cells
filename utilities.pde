@@ -247,7 +247,6 @@ void processDrawing(ArrayList<Ln> lns, ArrayList<Pt> pts) {
   polyes = getEdgesOfPolys(neighbors, lns, pts);
   polyns = getNeighborsOfPolys(polyes);
   outsidePoly = getOutsidePolygonIndex(polyes);
-  print(outsidePoly);
   status = 1;
 }
 
@@ -262,7 +261,7 @@ boolean checkPointInPoly(ArrayList<ArrayList<Integer>> polyes, int poly_idx, Pt 
 }
 
 Pt getPointInsidePoly(ArrayList<ArrayList<Integer>> polyes, int poly_idx) {
-  int gap = 10;
+  int gap = 30;
   int l_idx = polyes.get(poly_idx).get(0);
   int midx = (lns.get(l_idx).S().x+lns.get(l_idx).E().x)/2;
   int midy = (lns.get(l_idx).S().y+lns.get(l_idx).E().y)/2;
@@ -294,4 +293,28 @@ int getOutsidePolygonIndex(ArrayList<ArrayList<Integer>> polyes) {
     }
   }
   return -1;
+}
+
+boolean IsPolyNeighborOfPoly(ArrayList<Integer>[] polyns, int poly_idx, int poly_check) {
+  for (int i = 0; i < polyns[poly_idx].size(); i++) {
+    if (poly_check == polyns[poly_idx].get(i))
+      return true;
+  }
+  return false;
+}
+
+int cutLine(ArrayList<ArrayList<Integer>> polyes, ArrayList<Ln> lns, int poly_idx, Pt p) {
+  // poly_idx is the poly p is in
+  int dmin = 9999999;
+  int imin = -1;
+  for (int i = 0; i < polyes.get(poly_idx).size(); i++) {
+    int l_idx = polyes.get(poly_idx).get(i);
+    Pt mid_pt = new Pt((lns.get(l_idx).S().x+lns.get(l_idx).E().x)/2, (lns.get(l_idx).S().y+lns.get(l_idx).E().y)/2);
+    int d = p.dist2(mid_pt);
+    if (d < dmin) {
+      dmin = d;
+      imin = i;
+    }
+  }
+  return polyes.get(poly_idx).get(imin);
 }
