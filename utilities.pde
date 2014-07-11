@@ -303,18 +303,56 @@ boolean IsPolyNeighborOfPoly(ArrayList<Integer>[] polyns, int poly_idx, int poly
   return false;
 }
 
-int cutLine(ArrayList<ArrayList<Integer>> polyes, ArrayList<Ln> lns, int poly_idx, Pt p) {
-  // poly_idx is the poly p is in
+int cutLine(ArrayList<Integer> l_idxes, Pt p) {
   int dmin = 9999999;
   int imin = -1;
-  for (int i = 0; i < polyes.get(poly_idx).size(); i++) {
-    int l_idx = polyes.get(poly_idx).get(i);
-    Pt mid_pt = new Pt((lns.get(l_idx).S().x+lns.get(l_idx).E().x)/2, (lns.get(l_idx).S().y+lns.get(l_idx).E().y)/2);
+  for (int i = 0; i < l_idxes.size(); i++) {
+    Pt mid_pt = new Pt((lns.get(l_idxes.get(i)).S().x+lns.get(l_idxes.get(i)).E().x)/2, (lns.get(l_idxes.get(i)).S().y+lns.get(l_idxes.get(i)).E().y)/2);
     int d = p.dist2(mid_pt);
     if (d < dmin) {
       dmin = d;
       imin = i;
     }
   }
-  return polyes.get(poly_idx).get(imin);
+  return l_idxes.get(imin);
+}
+
+ArrayList<Integer> getCommonLinesOfTwoPolys(ArrayList<ArrayList<Integer>> polyes, ArrayList<Ln> lns, int poly_idx1, int poly_idx2) {
+  ArrayList<Integer> crosslns = new ArrayList<Integer>();
+  for (int i = 0; i < polyes.get(poly_idx1).size(); i++) {
+    for (int j = 0; j < polyes.get(poly_idx2).size(); j++) {
+      if (polyes.get(poly_idx1).get(i) == polyes.get(poly_idx2).get(j)) {
+        crosslns.add(polyes.get(poly_idx1).get(i));
+      }
+    }
+  }
+  return crosslns;
+}
+
+Pt calculatePtInNextPoly(ArrayList<ArrayList<Integer>> polyes, ArrayList<Ln> lns, int poly_idx, int l_idx, Pt mouse_pt) {
+  if (polyes.get(poly_idx).size() == 3) {
+    int midx = 0;
+    int midy = 0;
+    for (int i = 0; i < 3; i++) {
+      midx += (lns.get(polyes.get(poly_idx).get(i)).S().x + lns.get(polyes.get(poly_idx).get(i)).E().x);
+      midy += (lns.get(polyes.get(poly_idx).get(i)).S().y + lns.get(polyes.get(poly_idx).get(i)).E().y);
+    }
+    midx /= 6;
+    midy /= 6;
+    return new Pt(midx, midy);
+  }
+  return mouse_pt;
+}
+
+ArrayList<Pt> calculateTrail(ArrayList<ArrayList<Integer>> polyes, ArrayList<Ln> lns, int poly_idx, int l_idx, Pt start_pt, Pt end_pt) {
+  float samples = 10.;
+  ArrayList<Pt> added_pts = new ArrayList<Pt>();
+  Pt mid_pt = new Pt((lns.get(l_idx).S().x+lns.get(l_idx).E().x)/2, (lns.get(l_idx).S().y+lns.get(l_idx).E().y)/2);
+  for (int i = 0; i < 10; i++) {
+    added_pts.add(start_pt.P(i / samples, mid_pt));
+  }
+  for (int i = 0; i < 10; i++) {
+    added_pts.add(mid_pt.P(i / samples, end_pt));
+  }
+  return added_pts;
 }

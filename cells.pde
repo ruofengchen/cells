@@ -13,6 +13,7 @@ int outsidePoly = -1;
 ArrayList<Integer>[] polyns;
 int status = 0; // 0: draw, 1: generated models
 
+boolean[] lns_used; // corrupted line indexes
 ArrayList<Pt> trail = new ArrayList<Pt>(); // for rendering
 ArrayList<Integer> path = new ArrayList<Integer>(); // for calculation
 
@@ -68,8 +69,17 @@ void draw() {
     }
     
     if (status == 2) {
+      trail.get(0).plot2();
       for (int i = 0; i < trail.size()-1; i++) {
-        trail.get(i).plotLineTo(trail.get(i+1));
+//        trail.get(i).plotLineTo(trail.get(i+1));
+        trail.get(i+1).plot2();
+      }
+      for (int i = 0; i < lns.size(); i++) {
+        if (lns_used[i]) {
+          fill(255, 255, 0);
+          text(i, (lns.get(i).S().x+lns.get(i).E().x)/2, (lns.get(i).S().y+lns.get(i).E().y)/2-10);
+          noFill();
+        }
       }
     }
   }

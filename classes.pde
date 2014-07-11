@@ -10,6 +10,10 @@ class Pt {
     x = x_;
     y = y_;
   }
+  
+  Pt P(float s, Pt end_pt) {
+    return new Pt(int(x*(1-s) + end_pt.x*s), int(y*(1-s) + end_pt.y*s));
+  }
   void plot() {
     fill(0, 255, 0);
     ellipse(x, y, 20, 20);
@@ -17,7 +21,7 @@ class Pt {
   }
   void plot2() {
     fill(0, 128, 0);
-    ellipse(x, y, 10, 10);
+    ellipse(x, y, 2, 2);
     noFill();
   }
   void plotLineTo(Pt p) {
@@ -70,6 +74,7 @@ class Ln {
     strokeWeight(1);
     noFill();
   }
+  
   Pt S() {
     return pts.get(s);
   }

@@ -5,6 +5,7 @@ void place_start_point() {
   if (poly_idx != outsidePoly) { // only allow placing inside
     trail.add(mouse_pt);
     path.add(poly_idx);
+    lns_used = new boolean[lns.size()];
     status = 2;
   }
 }
@@ -15,14 +16,19 @@ void move_forward() {
   Pt mouse_pt = new Pt(mouseX, mouseY);
   int poly_idx = getPolygonPointFallsIn(polyes, mouse_pt, outsidePoly);
   if (IsPolyNeighborOfPoly(polyns, path.get(path.size()-1), poly_idx)) {
-    println("valid move");
-    trail.add(mouse_pt);
-    int next_l_idx = cutLine(polyes, lns, poly_idx, mouse_pt);
-    path.add(next_l_idx);
-    path.add(poly_idx);
-  }
-  else {
-    println("invalid move");
+    ArrayList<Integer> crosslns = getCommonLinesOfTwoPolys(polyes, lns, path.get(path.size()-1), poly_idx);
+    int l_cross = cutLine(crosslns, mouse_pt);
+    if (!lns_used[l_cross]) {
+      Pt next_pt = calculatePtInNextPoly(polyes, lns, poly_idx, l_cross, mouse_pt);
+      lns_used[l_cross] = true;
+      
+      ArrayList<Pt> added_trail = calculateTrail(polyes, lns, poly_idx, l_cross, last_pt, next_pt);
+      for (int i = 0; i < added_trail.size(); i++) {
+        trail.add(added_trail.get(i));
+      }
+      path.add(l_cross);
+      path.add(poly_idx);
+    }
   }
   
 }
