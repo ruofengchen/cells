@@ -14,6 +14,12 @@ class Pt {
   Pt P(float s, Pt end_pt) {
     return new Pt(int(x*(1-s) + end_pt.x*s), int(y*(1-s) + end_pt.y*s));
   }
+  
+  Pt P(Vt v, float s) {
+    Vt u = v.S(s);
+    return new Pt(int(x+u.dx), int(y+u.dy));
+  }
+  
   void plot() {
     fill(0, 255, 0);
     ellipse(x, y, 20, 20);
@@ -86,5 +92,31 @@ class Ln {
       return true;
     else
       return false;
+  }
+};
+
+class Vt {
+  float dx;
+  float dy;
+  Vt(float _dx, float _dy) {
+    dx = _dx;
+    dy = _dy;
+  }
+  Vt(Pt p, Pt q) {
+    dx = q.x - p.x;
+    dy = q.y - p.y;
+  }
+  
+  Vt S(float s) {
+    return new Vt(dx*s, dy*s);
+  }
+  
+  Vt rotate90() {
+    float dy_ = - dx / dy;
+    return new Vt(1., dy_);
+  }
+  
+  float norm() {
+    return sqrt(dx*dx+dy*dy);
   }
 };

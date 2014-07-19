@@ -341,7 +341,16 @@ Pt calculatePtInNextPoly(ArrayList<ArrayList<Integer>> polyes, ArrayList<Ln> lns
     midy /= 6;
     return new Pt(midx, midy);
   }
-  return mouse_pt;
+  else {
+    Pt l_midpt = new Pt((lns.get(l_idx).S().x + lns.get(l_idx).E().x) / 2, (lns.get(l_idx).S().y + lns.get(l_idx).E().y) / 2);
+    Vt l_dir = new Vt(lns.get(l_idx).S(), lns.get(l_idx).E());
+    Vt l_perp = l_dir.rotate90();
+    l_perp = l_perp.S(1/l_perp.norm());
+    Pt next_pt = l_midpt.P(l_perp, 10);
+    if (!checkPointInPoly(polyes, poly_idx, next_pt))
+      next_pt = l_midpt.P(l_perp, -10);
+    return next_pt;
+  }
 }
 
 ArrayList<Pt> calculateTrail(ArrayList<ArrayList<Integer>> polyes, ArrayList<Ln> lns, int poly_idx, int l_idx, Pt start_pt, Pt end_pt) {
@@ -355,4 +364,36 @@ ArrayList<Pt> calculateTrail(ArrayList<ArrayList<Integer>> polyes, ArrayList<Ln>
     added_pts.add(mid_pt.P(i / samples, end_pt));
   }
   return added_pts;
+}
+
+boolean isTheTwoLinesAdjacent(ArrayList<ArrayList<Integer>>polyes, int poly_idx, boolean[] used, int l1_idx, int l2_idx) {
+  int l1_rank = -1, l2_rank = -1;
+  for (int i = 0; i < polyes.get(poly_idx).size(); i++) {
+    if (polyes.get(poly_idx).get(i) == l1_idx) {
+      l1_rank = i;
+    }
+    if (polyes.get(poly_idx).get(i) == l2_idx) {
+      l2_rank = i;
+    }
+  }
+  int greater = l1_rank;
+  int lesser = l2_rank;
+  if (l1_rank < l2_rank) {
+    lesser = l1_rank;
+    greater = l2_rank;
+  }
+//  println(lesser+","+greater+":"+poly_idx);
+  
+  boolean go_up_works = true;
+  for (int i = lesser+1; i < greater; i++) {
+    if (used[i]) go_up_works = false;
+  }
+  boolean go_down_works = true;
+  for (int i = lesser-1; i >= 0; i--) {
+    if (used[i]) go_down_works = false;
+  }
+  for (int i = polyes.get(poly_idx).size()-1; i > greater; i--) {
+    if (used[i]) go_down_works = false;
+  }
+  return go_up_works || go_down_works;
 }

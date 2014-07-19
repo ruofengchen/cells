@@ -15,10 +15,12 @@ void move_forward() {
   Pt last_pt = trail.get(trail.size()-1);
   Pt mouse_pt = new Pt(mouseX, mouseY);
   int poly_idx = getPolygonPointFallsIn(polyes, mouse_pt, outsidePoly);
-  if (IsPolyNeighborOfPoly(polyns, path.get(path.size()-1), poly_idx)) {
+  if (poly_idx != outsidePoly && IsPolyNeighborOfPoly(polyns, path.get(path.size()-1), poly_idx)) {
     ArrayList<Integer> crosslns = getCommonLinesOfTwoPolys(polyes, lns, path.get(path.size()-1), poly_idx);
     int l_cross = cutLine(crosslns, mouse_pt);
-    if (!lns_used[l_cross]) {
+//    println(l_cross+","+lns_used[l_cross]);
+    if (path.size() == 1 || 
+    (!lns_used[l_cross] && path.size() > 1 && isTheTwoLinesAdjacent(polyes, path.get(path.size()-1), lns_used, l_cross, path.get(path.size()-2)))) {
       Pt next_pt = calculatePtInNextPoly(polyes, lns, poly_idx, l_cross, mouse_pt);
       lns_used[l_cross] = true;
       
