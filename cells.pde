@@ -17,26 +17,37 @@ boolean[] lns_used; // corrupted line indexes
 ArrayList<Pt> trail = new ArrayList<Pt>(); // for rendering
 ArrayList<Integer> path = new ArrayList<Integer>(); // for calculation
 
+Resource vertex;
+Resource edge;
+Resource player;
+Resource mark;
+
 void setup() {
   size(800, 600);
+  vertex = new Resource(51, 132, 0.25, "images/cone.gif");
+  edge = new Resource(126, 178, 0.1, "images/bush.gif");
+  player = new Resource(80, 370, 0.4, "images/rage.gif");
+  mark = new Resource(50, 65, 0.2, "images/poop.gif");
 }
 
 void draw() {
   background(150);
   
+  for (int i = 0; i < lns.size(); i++) {
+    edge.plotLn(lns.get(i));
+    fill(255);
+    text(i, (lns.get(i).S().x+lns.get(i).E().x)/2, (lns.get(i).S().y+lns.get(i).E().y)/2-10);
+    noFill();
+  }
+  
   for (int i = 0; i < pts.size(); i++) {
-    pts.get(i).plot();
+    vertex.plotPt(pts.get(i));
     fill(0);
     text(i, pts.get(i).x, pts.get(i).y-10);
     noFill();
   }
   
-  for (int i = 0; i < lns.size(); i++) {
-    lns.get(i).plot();
-    fill(255);
-    text(i, (lns.get(i).S().x+lns.get(i).E().x)/2, (lns.get(i).S().y+lns.get(i).E().y)/2-10);
-    noFill();
-  }
+
   
   if (status == 0) { // configure geometry
   
@@ -69,11 +80,10 @@ void draw() {
     }
     
     if (status == 2) {
-      trail.get(0).plot2();
       for (int i = 0; i < trail.size()-1; i++) {
-//        trail.get(i).plotLineTo(trail.get(i+1));
-        trail.get(i+1).plot2();
+        mark.plotPt(trail.get(i));
       }
+      player.plotPt(trail.get(trail.size()-1));
       for (int i = 0; i < lns.size(); i++) {
         if (lns_used[i]) {
           fill(255, 255, 0);

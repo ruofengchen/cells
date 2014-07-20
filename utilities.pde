@@ -354,13 +354,13 @@ Pt calculatePtInNextPoly(ArrayList<ArrayList<Integer>> polyes, ArrayList<Ln> lns
 }
 
 ArrayList<Pt> calculateTrail(ArrayList<ArrayList<Integer>> polyes, ArrayList<Ln> lns, int poly_idx, int l_idx, Pt start_pt, Pt end_pt) {
-  float samples = 10.;
+  float samples = 5.;
   ArrayList<Pt> added_pts = new ArrayList<Pt>();
   Pt mid_pt = new Pt((lns.get(l_idx).S().x+lns.get(l_idx).E().x)/2, (lns.get(l_idx).S().y+lns.get(l_idx).E().y)/2);
-  for (int i = 0; i < 10; i++) {
+  for (int i = 0; i < samples; i++) {
     added_pts.add(start_pt.P(i / samples, mid_pt));
   }
-  for (int i = 0; i < 10; i++) {
+  for (int i = 0; i < samples; i++) {
     added_pts.add(mid_pt.P(i / samples, end_pt));
   }
   return added_pts;
